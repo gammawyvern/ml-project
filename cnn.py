@@ -22,10 +22,12 @@ class Net(nn.Module):
         self.fc1 = nn.Linear(207936, 256)
         self.fc2 = nn.Linear(256, 64)
         self.fc3 = nn.Linear(64, 10)
+        self.prelu1 = nn.PReLU()
+        self.prelu2 = nn.PReLU()
 
     def forward(self, x):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
+        x = self.pool(self.prelu1(self.conv1(x)))
+        x = self.pool(self.prelu2(self.conv2(x)))
         x = torch.flatten(x, 1)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
@@ -68,7 +70,7 @@ def main():
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
-        for epoch in range(10):
+        for epoch in range(20):
             print(f"Epoch: {epoch}")
 
             for i, data in enumerate(train_loader, 0):
